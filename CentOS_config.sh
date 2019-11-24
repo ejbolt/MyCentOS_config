@@ -8,6 +8,15 @@ else
 	echo "Detected running as root"
 fi
 
+if [[ $(cat /etc/centos-release | cut -d ' ' -f 4 | cut -d '.' -f 1) -ge 8 ]]
+then
+  CENTVER="8+"
+  PACKAGE_MANGER="dnf"
+else
+  CENTVER="7"
+  PACKAGE_MANAGER="yum"
+fi
+
 # Configure shell
 wget -O /etc/profile.d/colorprompt.sh https://gist.githubusercontent.com/kholis/3985921/raw/d55393f64c4a21dbd419c769548c6319a21d84b4/colorprompt.sh
 
@@ -22,22 +31,30 @@ then
 fi
 
 # Install epel
-dnf install -y epel-release
+"${PACKAGE_MANAGER}" install -y epel-release
 
 # Install elrepo
 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-dnf install -y https://www.elrepo.org/elrepo-release-8.0-2.el8.elrepo.noarch.rpm
+"${PACKAGE_MANAGER}" install -y https://www.elrepo.org/elrepo-release-8.0-2.el8.elrepo.noarch.rpm
 sed -i 's/enabled=0/enabled=1/4' /etc/yum.repos.d/elrepo.repo
 
 # Require root password for sudo
 echo "Defaults rootpw" > /etc/sudoers.d/Require_Root_Pass
 
 # Modify nano, CentOS 7 has an older version so some options arent'y the same
-if [[ $(cat /etc/centos-release | cut -d ' ' -f 4 | cut -d '.' -f 1) -ge 8 ]]
+if [[ CENTVER == "8+" ]]
 then
   sed -i 's/# set smooth/set smooth/' /etc/nanorc
   sed -i 's/# set constantshow/set constantshow/' /etc/nanorc
 else
   sed -i 's/# set smooth/set smooth/' /etc/nanorc
   sed -i 's/# set const/set const/' /etc/nanorc
+fi
+
+# Fix DNF tab completion
+if [[ CENTER == "8+" ]]
+then
+  "${PACKAGE_MANAGER}" install python3
+  wget -O /usr/lib/python3/site-packages/dnf/cli/completion_helper.py https://raw.githubusercontent.com/rpm-software-management/dnf/master/dnf/cli/completion_helper.py.in
+  sed -i -e 's/@PYTHON_EXECUTABLE@/\/usr\/libexec\/platform-python/g' /usr/lib/python3/site-packages/dnf/cli/completion_helper.py
 fi
