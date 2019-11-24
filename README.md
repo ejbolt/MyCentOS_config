@@ -6,3 +6,4 @@ Just a small script that does initial setup of things I find useful for CentOS:
   4. Installs ELRepo and enables Extras
   5. Requires root password for sudoers
   6. Enables smooth scrolling and constantshow in nano
+  7. Fix DNF tab completion
