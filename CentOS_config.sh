@@ -22,7 +22,7 @@ echo ${PACKAGE_MANAGER}
 # Configure shell
 wget -O /etc/profile.d/colorprompt.sh https://gist.githubusercontent.com/kholis/3985921/raw/d55393f64c4a21dbd419c769548c6319a21d84b4/colorprompt.sh
 
-if [[ CENTVER == "8+" ]]
+if [ "${CENTVER}" == "8+" ]
 then
   # Enable centosplus
   sed -i 's/enabled=0/enabled=1/' /etc/yum.repos.d/CentOS-centosplus.repo
@@ -48,7 +48,7 @@ sed -i 's/enabled=0/enabled=1/4' /etc/yum.repos.d/elrepo.repo
 echo "Defaults rootpw" > /etc/sudoers.d/Require_Root_Pass
 
 # Modify nano, CentOS 7 has an older version so some options arent'y the same
-if [[ CENTVER == "8+" ]]
+if [ "${CENTVER}" == "8+" ]
 then
   sed -i 's/# set smooth/set smooth/' /etc/nanorc
   sed -i 's/# set constantshow/set constantshow/' /etc/nanorc
@@ -57,10 +57,13 @@ else
   sed -i 's/# set const/set const/' /etc/nanorc
 fi
 
+echo ${CENTVER}
+
 # Fix DNF tab completion
-if [[ CENTVER == "8+" ]]
+if [ "${CENTVER}" == "8+" ]
 then
+  echo "fixing dnf tab completion"
   "${PACKAGE_MANAGER}" install python36
-  wget -O /usr/lib/python3/site-packages/dnf/cli/completion_helper.py https://raw.githubusercontent.com/rpm-software-management/dnf/master/dnf/cli/completion_helper.py.in
-  sed -i -e 's/@PYTHON_EXECUTABLE@/\/usr\/libexec\/platform-python/g' /usr/lib/python3/site-packages/dnf/cli/completion_helper.py
+  wget -O /usr/lib/python3.6/site-packages/dnf/cli/completion_helper.py https://raw.githubusercontent.com/rpm-software-management/dnf/master/dnf/cli/completion_helper.py.in
+  sed -i -e 's/@PYTHON_EXECUTABLE@/\/usr\/libexec\/platform-python/g' /usr/lib/python3.6/site-packages/dnf/cli/completion_helper.py
 fi
