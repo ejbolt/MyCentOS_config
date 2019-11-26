@@ -58,7 +58,7 @@ else
 fi
 
 # Fix DNF tab completion
-if [[ CENTER == "8+" ]]
+if [[ CENTVER == "8+" ]]
 then
   "${PACKAGE_MANAGER}" install python36
   wget -O /usr/lib/python3/site-packages/dnf/cli/completion_helper.py https://raw.githubusercontent.com/rpm-software-management/dnf/master/dnf/cli/completion_helper.py.in
